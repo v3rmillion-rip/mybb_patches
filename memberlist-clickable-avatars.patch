@@ -1,0 +1,14 @@
+# [PATCH] memberlist clickable avatars
+# Author: yakov
+
+--- a/memberlist.php
++++ b/memberlist.php
+@@ -507,7 +507,7 @@ else
+ 
+ 		// Show avatar
+ 		$useravatar = format_avatar($user['avatar'], $user['avatardimensions'], my_strtolower($mybb->settings['memberlistmaxavatarsize']));
+-		eval("\$user['avatar'] = \"".$templates->get("memberlist_user_avatar")."\";");
++		eval("\$user['avatar'] = build_profile_link(\"".$templates->get("memberlist_user_avatar")."\", \$user['uid']);");
+ 
+ 		$last_seen = max(array($user['lastactive'], $user['lastvisit']));
+ 		if(empty($last_seen))

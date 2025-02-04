@@ -1,0 +1,58 @@
+# [PATCH] allow for private or optional reputation
+# Author: yakov
+
+--- a/inc/languages/english/reputation.lang.php
++++ b/inc/languages/english/reputation.lang.php
+@@ -20,6 +20,7 @@ $l['add_maxperday'] = "You have already given as many reputation ratings as you
+ $l['add_maxperuser'] = "You've already given this user as many reputation ratings as you can for today.";
+ $l['add_maxperthread'] = "You've already given this user as many reputation ratings (in one thread) as you can for today.";
+ $l['add_no_comment'] = "You must enter a comment of at least {1} characters to give this user a reputation rating.";
++$l['add_no_comment_placeholder'] = "You may type a comment or leave this blank.";
+ $l['add_toolong'] = "You must enter a reason no longer than {1} characters.";
+ $l['add_negative_disabled'] = "The administrator has disabled negative reputations.";
+ $l['add_neutral_disabled'] = "The administrator has disabled neutral reputations.";
+@@ -46,7 +47,7 @@ $l['neg_rep_disabled'] = "<span class=\"smalltext\">* - <em>Negative reputation
+ $l['pos_rep_disabled'] = "<span class=\"smalltext\">* - <em>Positive reputation is currently disabled</em></span>";
+ $l['neu_rep_disabled'] = "<span class=\"smalltext\">* - <em>Neutral reputation is currently disabled</em></span>";
+ $l['no_comment_needed'] = "You're adding reputation because of this user's post, which is linked in their profile. A comment isn't needed, but if you want to leave one, please enter it below.<br />";
+-$l['no_comment'] = "[No comment]";
++$l['no_comment'] = "<span style='color:#545454'>No comment entered.</span>";
+ $l['vote_added'] = "Rating Added";
+ $l['vote_updated'] = "Rating Updated";
+ $l['vote_deleted'] = "Rating Deleted";
+@@ -79,4 +80,5 @@ $l['no_reputation_votes'] = "This user currently does not have any reputation ra
+ $l['delete_reputation_confirm'] = "Are you sure you wish to delete this reputation Rating?";
+ $l['delete_reputation_log'] = "Deleted reputation rating by {1} (UID: {2})";
+ $l['reputations_disabled_group'] = "The reputation system is disabled for users of this user group.";
++$l['reputations_disabled_user'] = "Reputation is disabled for this user.";
+ $l['rate_user'] = "Rate User";
+
+--- a/install/resources/settings.xml
++++ b/install/resources/settings.xml
+@@ -1684,9 +1684,9 @@ min=1]]></optionscode>
+ 			<description><![CDATA[The minimum number of characters a reputation can be.]]></description>
+ 			<disporder>9</disporder>
+ 			<optionscode><![CDATA[numeric
+-min=1]]></optionscode>
++min=0]]></optionscode>
+ 			<settingvalue><![CDATA[10]]></settingvalue>
+-			<isdefault>1</isdefault>
++			<isdefault>0</isdefault>
+ 		</setting>
+ 	</settinggroup>
+ 	<settinggroup name="warning" title="Warning System Settings" description="The warning system allows forum staff to warn users for rule violations. Here you can manage the settings that control the warning system (warnings.php)." disporder="15" isdefault="1">
+
+--- a/reputation.php
++++ b/reputation.php
+@@ -584,6 +584,11 @@ if($mybb->input['action'] == "delete")
+ // Otherwise, show a listing of reputations for the given user.
+ if(!$mybb->input['action'])
+ {
++	if ($uid === 1 && !is_super_admin($mybb->user['uid']))
++	{
++		error($lang->reputations_disabled_user);
++	}
++
+ 	if($mybb->usergroup['canviewprofiles'] == 0)
+ 	{
+ 		// Reputation page is a part of a profile

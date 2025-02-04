@@ -1,0 +1,39 @@
+# [PATCH] don't allow unapproved domains for images within post
+# Author: yakov
+
+--- a/inc/class_parser.php
++++ b/inc/class_parser.php
+@@ -1325,7 +1325,32 @@ class postParser
+ 	 */
+ 	function mycode_parse_img_callback1($matches)
+ 	{
+-		return $this->mycode_parse_img($matches[2]);
++		$allowed_domains = [
++			'i.imgur.com',
++			'cdn.discordapp.com',
++			'postimg.cc',
++			'postimages.org',
++			'staticflickr.com',
++			'flickr.com',
++			'i.gyazo.com',
++			'prnt.sc',
++			'image.prntscr.com',
++			'lh3.googleusercontent.com',
++			'dl.dropboxusercontent.com',
++			'1drv.ms',
++			'deviantart.net',
++			'i.ibb.co',
++			'external-content.duckduckgo.com'
++		];
++	    $url = trim($matches[2]); // Extract URL from the match
++	    $parsed_url = parse_url($url);
++
++	    if (isset($parsed_url['host']) && in_array($parsed_url['host'], $allowed_domains)) {
++	        return $this->mycode_parse_img($url);
++	    }
++
++	    // For unsupported domains, return fallback or empty string
++	    return '<span>(Unsupported image domain)</span>';
+ 	}
+ 
+ 	/**

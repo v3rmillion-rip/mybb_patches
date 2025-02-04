@@ -1,0 +1,23 @@
+# [PATCH] sort memberlist by uid
+# Author: yakov
+
+--- a/memberlist.php
++++ b/memberlist.php
+@@ -34,6 +34,7 @@ if($mybb->usergroup['canviewmemberlist'] == 0)
+ }
+ 
+ $orderarrow = $sort_selected = array(
++	'uid' => '',
+ 	'regdate' => '',
+ 	'lastvisit' => '',
+ 	'reputation' => '',
+@@ -110,6 +111,9 @@ else
+ 
+ 	switch($mybb->input['sort'])
+ 	{
++		case "uid":
++			$sort_field = "u.uid";
++			break;
+ 		case "regdate":
+ 			$sort_field = "u.regdate";
+ 			break;
