@@ -1,0 +1,23 @@
+# [PATCH] Show ban details for admins and declare $bandate_rel for template
+# Author: yakov
+
+--- a/member.php
++++ b/member.php
+@@ -2646,7 +2646,7 @@ if($mybb->input['action'] == "profile")
+ 	$formattedname = format_name($memprofile['username'], $memprofile['usergroup'], $memprofile['displaygroup']);
+ 
+ 	$bannedbit = '';
+-	if($memperms['isbannedgroup'] == 1 && $mybb->usergroup['canbanusers'] == 1)
++	if($memperms['isbannedgroup'] == 1)
+ 	{
+ 		// Fetch details on their ban
+ 		$query = $db->simple_select('banned b LEFT JOIN '.TABLE_PREFIX.'users a ON (b.admin=a.uid)', 'b.*, a.username AS adminuser', "b.uid='{$uid}'", array('limit' => 1));
+@@ -2699,6 +2699,8 @@ if($mybb->input['action'] == "profile")
+ 				}
+ 			}
+ 			eval('$timeremaining = "'.$templates->get('member_profile_banned_remaining').'";');
++		    $bandate_rel = my_date('relative', $memban['dateline']);
++            
+ 
+ 			$memban['adminuser'] = build_profile_link(htmlspecialchars_uni($memban['adminuser']), $memban['admin']);
+ 
