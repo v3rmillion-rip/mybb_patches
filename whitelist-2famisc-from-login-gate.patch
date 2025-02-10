@@ -1,0 +1,15 @@
+# [PATCH] whitelist 2famisc.php from login gate
+# Author: yakov
+
+--- a/global.php
++++ b/global.php
+@@ -1148,6 +1148,9 @@ $force_bypass = array(
+ 		'do_resendactivation',
+ 		'resetpassword',
+ 	),
++  '2famisc.php' => array(
++    'lost2fa',
++  ),
+ 	'captcha.php',
+ 	'contact.php',
+ );
